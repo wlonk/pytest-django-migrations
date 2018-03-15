@@ -71,7 +71,7 @@ setup(
     description='Test Django migrations through Pytest.',
     long_description=long_description,
     author='Kit La Touche',
-    author_email='kit@transneptune.net'
+    author_email='kit@transneptune.net',
     url='https://github.com/wlonk/pytest-django-migrations',
     download_url='https://github.com/wlonk/pytest-django-migrations/tarball/' + __version__,
     license='BSD',
