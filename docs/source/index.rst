@@ -22,13 +22,14 @@ Here's an example:
 
    # We are changing our data model from one-to-many Authors to Books to
    # many-to-many Authors-to-Books, because we want to support collaborations.
-   @pytedjmi.setup('0011_add_book_model')
+   @pytedjmi.setup('app_name', '0011_add_book_model')
    def one2m_books_and_authors(apps):
        Book = apps.get_model('library', 'Book')
        Author = apps.get_model('library', 'Author')
        a_book = Book.objects.create(title='Moby-Dick')
        Author.objects.create(book=a_book, name='Herman Melville')
 
+   @pytest.mark.django_db
    @one2m_books_and_authors.to_migration('0012_book_author_m2m_data_migration')
    def test_books_and_authors_now_m2m(apps=None):
        Book = apps.get_model('library', 'Book')
