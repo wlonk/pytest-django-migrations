@@ -14,21 +14,17 @@ class DjMiSetup:
         self.pre_run_fn = fn
         return self
 
-    def get_from_to(self):
-        return (
-            [(self.app, self.migrate_from)],
-            [(self.app, self.migrate_to)],
-        )
-
-    def apply_migration(self):
-        migrate_from, migrate_to = self.get_from_to()
+    def apply_migration(self, migrate_to):
+        migrate_from = [(self.app, self.migrate_from)]
+        migrate_to = [(self.app, migrate_to)]
         executor = MigrationExecutor(connection)
         old_apps = executor.loader.project_state(migrate_from).apps
         executor.migrate(migrate_to)
         return old_apps
 
-    def revert_migration(self):
-        migrate_from, migrate_to = self.get_from_to()
+    def revert_migration(self, migrate_to):
+        migrate_from = [(self.app, self.migrate_from)]
+        migrate_to = [(self.app, migrate_to)]
         executor = MigrationExecutor(connection)
         executor.loader.build_graph()  # reload.
         executor.migrate(migrate_from)
@@ -39,12 +35,12 @@ class DjMiSetup:
             @wraps(fn)
             def wrapper(*args, **kwargs):
                 try:
-                    old_apps = self.revert_migration()
+                    old_apps = self.revert_migration(migrate_to)
                     self.pre_run_fn(old_apps)
-                    apps = self.apply_migration()
+                    apps = self.apply_migration(migrate_to)
                     return fn(*args, apps=apps, **kwargs)
                 finally:
-                    self.revert_migration()
+                    self.revert_migration(migrate_to)
             return wrapper
         return inner_decorator
 
