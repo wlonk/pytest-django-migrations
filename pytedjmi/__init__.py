@@ -28,7 +28,7 @@ class DjMiSetup:
         executor = MigrationExecutor(connection)
         executor.loader.build_graph()  # reload.
         executor.migrate(migrate_from)
-        return executor.loader.project_state(self.migrate_to).apps
+        return executor.loader.project_state(migrate_to).apps
 
     def to_migration(self, migrate_to):
         def inner_decorator(fn):
@@ -54,6 +54,7 @@ def setup(app, migrate_from):
             pass
 
 
+        @pytest.mark.django_db
         @some_setup.to_migration("ending point")
         def test_bar(..., *, apps=None, ...):
             pass
