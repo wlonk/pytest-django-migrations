@@ -30,7 +30,7 @@ Here's an example:
        Author.objects.create(book=a_book, name='Herman Melville')
 
    @one2m_books_and_authors.to_migration('0012_book_author_m2m_data_migration')
-   def test_books_and_authors_now_m2m(apps):
+   def test_books_and_authors_now_m2m(apps=None):
        Book = apps.get_model('library', 'Book')
        Author = apps.get_model('library', 'Author')
        author = Author.objects.first()

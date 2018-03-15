@@ -6,16 +6,13 @@ from django.db import connection
 
 
 class DjMiSetup:
-    def __init__(self, migrate_from):
+    def __init__(self, app, migrate_from):
+        self.app = app
         self.migrate_from = migrate_from
 
     def decorate(self, fn):
         self.pre_run_fn = fn
         return self
-
-    @property
-    def app(self):
-        return apps.get_containing_app_config(type(self).__module__).name
 
     def get_from_to(self):
         return (
@@ -52,21 +49,21 @@ class DjMiSetup:
         return inner_decorator
 
 
-def setup(migrate_from):
+def setup(app, migrate_from):
     """
     Use::
 
-        @setup("starting point")
+        @pytedjmi.setup("app", "starting point")
         def some_setup(apps):
             pass
 
 
         @some_setup.to_migration("ending point")
-        def test_bar(..., *, apps, ...):
+        def test_bar(..., *, apps=None, ...):
             pass
     """
     def inner_decorator(fn):
-        dj_mi_setup = DjMiSetup(migrate_from)
+        dj_mi_setup = DjMiSetup(app, migrate_from)
         dj_mi_setup.decorate(fn)
         return dj_mi_setup
     return inner_decorator
