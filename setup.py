@@ -1,5 +1,9 @@
+import sys
+import os
+
 from codecs import open
 from os import path
+from shutil import rmtree
 
 from setuptools import (
     setup,
@@ -73,7 +77,10 @@ setup(
     author='Kit La Touche',
     author_email='kit@transneptune.net',
     url='https://github.com/wlonk/pytest-django-migrations',
-    download_url='https://github.com/wlonk/pytest-django-migrations/tarball/' + __version__,
+    download_url=(
+        'https://github.com/wlonk/pytest-django-migrations/tarball/'
+        + __version__
+    ),
     license='BSD',
     classifiers=[
       'Development Status :: 3 - Alpha',
