@@ -2,7 +2,7 @@ from functools import wraps
 
 from django.apps import apps
 from django.db.migrations.executor import MigrationExecutor
-from django.db import connection
+from django.db import connection, transaction
 
 
 class DjMiSetup:
@@ -35,12 +35,15 @@ class DjMiSetup:
             @wraps(fn)
             def wrapper(*args, **kwargs):
                 try:
-                    old_apps = self.revert_migration(migrate_to)
-                    self.pre_run_fn(old_apps)
-                    apps = self.apply_migration(migrate_to)
-                    return fn(*args, apps=apps, **kwargs)
+                    with transaction.atomic():
+                        old_apps = self.revert_migration(migrate_to)
+                        self.pre_run_fn(old_apps)
+                        apps = self.apply_migration(migrate_to)
+                    with transaction.atomic():
+                        return fn(*args, apps=apps, **kwargs)
                 finally:
-                    self.revert_migration(migrate_to)
+                    with transaction.atomic():
+                        self.revert_migration(migrate_to)
             return wrapper
         return inner_decorator
 
