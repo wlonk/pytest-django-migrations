@@ -5,6 +5,10 @@ from django.db.migrations.executor import MigrationExecutor
 from django.db import connection, transaction
 
 
+class MigrationStructureError(Exception):
+    pass
+
+
 class DjMiSetup:
     def __init__(self, app, migrate_from):
         self.app = app
@@ -14,36 +18,52 @@ class DjMiSetup:
         self.pre_run_fn = fn
         return self
 
-    def apply_migration(self, migrate_to):
-        migrate_from = [(self.app, self.migrate_from)]
-        migrate_to = [(self.app, migrate_to)]
-        executor = MigrationExecutor(connection)
-        old_apps = executor.loader.project_state(migrate_from).apps
-        executor.migrate(migrate_to)
-        return old_apps
+    def run_executor(self, target):
+        with transaction.atomic():
+            executor = MigrationExecutor(connection)
+            executor.loader.build_graph()  # reload.
+            executor.loader.check_consistent_history(connection)
+            # Before anything else, see if there's conflicting apps and
+            # drop out hard if there are any
+            if executor.loader.detect_conflicts():
+                raise MigrationStructureError("Migrations have conflicts.")
+            plan = executor.migration_plan(target)
+            pre_migrate_state = executor._create_project_state(
+                with_applied_migrations=True,
+            )
+            post_migrate_state = executor.migrate(
+                target,
+                plan=plan,
+                state=pre_migrate_state.clone(),
+            )
+            post_migrate_state.clear_delayed_apps_cache()
+            return executor.loader.project_state(target).apps
 
-    def revert_migration(self, migrate_to):
-        migrate_from = [(self.app, self.migrate_from)]
+    def apply_migration(self, migrate_to):
         migrate_to = [(self.app, migrate_to)]
-        executor = MigrationExecutor(connection)
-        executor.loader.build_graph()  # reload.
-        executor.migrate(migrate_from)
-        return executor.loader.project_state(migrate_to).apps
+        return self.run_executor(migrate_to)
+
+    def revert_migration(self):
+        migrate_from = [(self.app, self.migrate_from)]
+        return self.run_executor(migrate_from)
 
     def to_migration(self, migrate_to):
         def inner_decorator(fn):
             @wraps(fn)
             def wrapper(*args, **kwargs):
                 try:
-                    with transaction.atomic():
-                        old_apps = self.revert_migration(migrate_to)
-                        self.pre_run_fn(old_apps)
-                        apps = self.apply_migration(migrate_to)
-                    with transaction.atomic():
-                        return fn(*args, apps=apps, **kwargs)
-                finally:
-                    with transaction.atomic():
-                        self.revert_migration(migrate_to)
+                    old_apps = self.revert_migration()
+                    self.pre_run_fn(old_apps)
+                    apps = self.apply_migration(migrate_to)
+                except Exception as e:
+                    raise e
+                with transaction.atomic():
+                    return fn(
+                        *args,
+                        old_apps=old_apps,
+                        apps=apps,
+                        **kwargs,
+                    )
             return wrapper
         return inner_decorator
 
@@ -59,7 +79,7 @@ def setup(app, migrate_from):
 
         @pytest.mark.django_db
         @some_setup.to_migration("ending point")
-        def test_bar(..., *, apps=None, ...):
+        def test_bar(..., *, old_apps=None, apps=None, ...):
             pass
     """
     def inner_decorator(fn):

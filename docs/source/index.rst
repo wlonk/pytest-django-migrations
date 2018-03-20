@@ -17,6 +17,7 @@ Here's an example:
 
 .. code-block:: python
 
+   import pytest
    import pytedjmi
 
 
@@ -31,7 +32,7 @@ Here's an example:
 
    @pytest.mark.django_db
    @one2m_books_and_authors.to_migration('0012_book_author_m2m_data_migration')
-   def test_books_and_authors_now_m2m(apps=None):
+   def test_books_and_authors_now_m2m(old_apps=None, apps=None):
        Book = apps.get_model('library', 'Book')
        Author = apps.get_model('library', 'Author')
        author = Author.objects.first()
@@ -40,6 +41,11 @@ Here's an example:
        assert book.author_set.all() == [author]
        assert author.book_set.all() == [book]
 
+
+Depending on your database backend and the migrations you run, you may
+need to include ``pytest-django``'s ``transactional_db`` fixture. If you
+see errors telling you about pending trigger events, this is probably
+the fix you need.
 
 Indices and tables
 ==================
