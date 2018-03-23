@@ -51,12 +51,9 @@ class DjMiSetup:
         def inner_decorator(fn):
             @wraps(fn)
             def wrapper(*args, **kwargs):
-                try:
-                    old_apps = self.revert_migration()
-                    self.pre_run_fn(old_apps)
-                    apps = self.apply_migration(migrate_to)
-                except Exception as e:
-                    raise e
+                old_apps = self.revert_migration()
+                self.pre_run_fn(old_apps)
+                apps = self.apply_migration(migrate_to)
                 with transaction.atomic():
                     return fn(
                         *args,
