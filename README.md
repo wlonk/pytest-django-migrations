@@ -14,7 +14,7 @@ Installation / Usage
 
 To install use pip:
 
-    $ pip install pytest-django-migrations
+    $ pip install pytedjmi
 
 
 Or clone the repo:
