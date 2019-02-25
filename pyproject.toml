@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "pytedjmi"
+version = "0.2.0"
+description = "Test Django migrations through Pytest."
+authors = ["Kit La Touche <kit@transneptune.net>"]
+readme = "README.rst"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+pytest = "^3.0"
+django = "^2.0"
+
+[tool.poetry.dev-dependencies]
+black = "^18.9b0"
+coverage = "*"
+flake8 = "*"
+isort = "*"
+pytest-cov = "*"
+pytest-django = "*"
+sphinx = "*"
+sphinx_rtd_theme = "*"
+tox = "*"
+psycopg2-binary = "*"
+
+[tool.black]
+py36 = true
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

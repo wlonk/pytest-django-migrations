@@ -1,5 +1,6 @@
+========================
 Pytest Django Migrations
-===============================
+========================
 
 version number: 0.1.0
 author: Kit La Touche
@@ -12,12 +13,12 @@ Test Django migrations through Pytest.
 Installation / Usage
 --------------------
 
-To install use pip:
+To install use pip::
 
     $ pip install pytedjmi
 
 
-Or clone the repo:
+Or clone the repo::
 
     $ git clone https://github.com/wlonk/pytest-django-migrations.git
     $ python setup.py install
