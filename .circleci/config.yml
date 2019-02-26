@@ -4,6 +4,11 @@ jobs:
   test_py36_dj20: &test-template
     docker:
       - image: circleci/python:3.6
+      - image: circleci/postgres:latest
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_DB: pytedjmi
+          POSTGRES_PASSWORD: circle_test
     environment:
       TOXENV: py36-django20
     steps:
@@ -16,6 +21,11 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.6
+      - image: circleci/postgres:latest
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_DB: pytedjmi
+          POSTGRES_PASSWORD: circle_test
     environment:
       TOXENV: py36-django21
 
@@ -23,6 +33,11 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
+      - image: circleci/postgres:latest
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_DB: pytedjmi
+          POSTGRES_PASSWORD: circle_test
     environment:
       TOXENV: py37-django20
 
@@ -30,6 +45,11 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
+      - image: circleci/postgres:latest
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_DB: pytedjmi
+          POSTGRES_PASSWORD: circle_test
     environment:
       TOXENV: py37-django21
 
