@@ -21,6 +21,7 @@ sphinx = "*"
 sphinx_rtd_theme = "*"
 tox = "*"
 psycopg2-binary = "*"
+dj-database-url = "^0.5.0"
 
 [tool.black]
 py36 = true
