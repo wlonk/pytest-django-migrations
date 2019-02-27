@@ -21,25 +21,29 @@ Here's an example:
    import pytedjmi
 
 
-   # We are changing our data model from one-to-many Authors to Books to
+   # We are changing our data model from one-to-many Authors-to-Books to
    # many-to-many Authors-to-Books, because we want to support collaborations.
-   @pytedjmi.setup_migration('app_name', '0011_add_book_model')
-   def one2m_books_and_authors(apps):
-       Book = apps.get_model('library', 'Book')
-       Author = apps.get_model('library', 'Author')
+   @pytest.mark.django_db
+   def test_books_and_authors_data_migration():
+       # First, we roll back:
+       old_apps = pytedjmi.migrate("app_name", "0011_add_book_model")
+       Book = old_apps.get_model('library', 'Book')
+       Author = old_apps.get_model('library', 'Author')
        a_book = Book.objects.create(title='Moby-Dick')
        Author.objects.create(book=a_book, name='Herman Melville')
 
-   @pytest.mark.django_db
-   @one2m_books_and_authors.to_migration('0012_book_author_m2m_data_migration')
-   def test_books_and_authors_now_m2m(old_apps=None, apps=None):
-       Book = apps.get_model('library', 'Book')
-       Author = apps.get_model('library', 'Author')
+       # Then, we roll forward and get the new models:
+       new_apps = pytedjmi.migrate(
+           "app_name",
+           "0012_book_author_m2m_data_migration",
+       )
+       Book = new_apps.get_model('library', 'Book')
+       Author = new_apps.get_model('library', 'Author')
        author = Author.objects.first()
        book = Book.objects.first()
 
-       assert book.author_set.all() == [author]
-       assert author.book_set.all() == [book]
+       assert list(book.author_set.all()) == [author]
+       assert list(author.book_set.all()) == [book]
 
 
 Depending on your database backend and the migrations you run, you may
