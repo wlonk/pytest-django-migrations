@@ -24,6 +24,7 @@ Here's an example:
    # We are changing our data model from one-to-many Authors-to-Books to
    # many-to-many Authors-to-Books, because we want to support collaborations.
    @pytest.mark.django_db
+   @pytedjmi.cleanup
    def test_books_and_authors_data_migration():
        # First, we roll back:
        old_apps = pytedjmi.migrate("app_name", "0011_add_book_model")
