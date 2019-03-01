@@ -4,6 +4,10 @@ from django.db import connection, transaction
 from django.db.migrations.executor import MigrationExecutor
 
 
+class MigrationStructureError(Exception):
+    pass
+
+
 def migrate(app=None, migration=None):
     with transaction.atomic():
         executor = MigrationExecutor(connection)
