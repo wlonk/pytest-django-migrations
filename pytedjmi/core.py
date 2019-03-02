@@ -47,6 +47,7 @@ def cleanup(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         try:
+            connection.disable_constraint_checking()
             with transaction.atomic():
                 return fn(*args, **kwargs)
         finally:

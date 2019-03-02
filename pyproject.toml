@@ -9,6 +9,7 @@ readme = "README.rst"
 python = "^3.6"
 pytest = "^3.0"
 django = "^2.0"
+pytest-django = "^3.4"
 
 [tool.poetry.dev-dependencies]
 black = "^18.9b0"
@@ -16,12 +17,9 @@ coverage = "*"
 flake8 = "*"
 isort = "*"
 pytest-cov = "*"
-pytest-django = "*"
 sphinx = "*"
 sphinx_rtd_theme = "*"
 tox = "*"
-psycopg2-binary = "*"
-dj-database-url = "^0.5.0"
 
 [tool.black]
 py36 = true
