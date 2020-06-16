@@ -12,12 +12,12 @@ jobs:
       - run: poetry install
       - run: tox
 
-  test_py38_dj21:
+  test_py38_dj22:
     <<: *test-template
     docker:
       - image: circleci/python:3.8
     environment:
-      TOXENV: py38-django21
+      TOXENV: py38-django22
 
   test_py37_dj30:
     <<: *test-template
@@ -26,18 +26,18 @@ jobs:
     environment:
       TOXENV: py37-django30
 
-  test_py37_dj21:
+  test_py37_dj22:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
     environment:
-      TOXENV: py37-django21
+      TOXENV: py37-django22
 
 workflows:
   version: 2
   test:
     jobs:
       - test_py38_dj30
-      - test_py38_dj21
+      - test_py38_dj22
       - test_py37_dj30
-      - test_py37_dj21
+      - test_py37_dj22
