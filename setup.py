@@ -32,7 +32,7 @@ setup(
         'Topic :: Software Development :: Testing'
     ],
     entry_points={'pytest11': ['pytedjmi = pytedjmi.core']},
-    packages=['pytedjmi', 'tests.test_migrations.migrations'],
+    packages=['pytedjmi', 'tests.migrations'],
     package_data={},
     install_requires=[
         'django==3.*,>=3.0.0', 'pytest==5.*,>=5.4.3',
