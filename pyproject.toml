@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytedjmi"
-version = "0.3.0"
+version = "0.4.0"
 description = "Test Django migrations through Pytest."
 authors = ["Kit La Touche <kit@transneptune.net>"]
 readme = "README.rst"
@@ -12,14 +12,17 @@ classifiers = [
     "Topic :: Software Development :: Testing"
 ]
 
+[tool.poetry.plugins."pytest11"]
+pytedjmi = "pytedjmi.core"
+
 [tool.poetry.dependencies]
 python = "^3.6"
 pytest = "^3.0"
-django = "^2.1"
+django = "^2.2"
 pytest-django = "^3.4"
 
 [tool.poetry.dev-dependencies]
-black = "^18.9b0"
+black = "^19.10b0"
 coverage = "*"
 flake8 = "*"
 isort = "*"

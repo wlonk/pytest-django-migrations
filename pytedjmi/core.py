@@ -1,7 +1,19 @@
+import pytest
 from functools import wraps
 
 from django.db import connection, transaction
-from django.db.migrations.executor import MigrationExecutor
+
+
+def pytest_load_initial_conftests(early_config, parser, args):
+    # Register the marks
+    early_config.addinivalue_line(
+        "markers",
+        "migrate_from(app, migration): start the database at (app, migration).",
+    )
+
+
+class MissingMigrationSetupError(Exception):
+    pass
 
 
 class MigrationStructureError(Exception):
@@ -9,6 +21,8 @@ class MigrationStructureError(Exception):
 
 
 def migrate(app=None, migration=None):
+    from django.db.migrations.executor import MigrationExecutor
+
     with transaction.atomic():
         executor = MigrationExecutor(connection)
         executor.loader.build_graph()  # reload.
@@ -43,14 +57,15 @@ def migrate(app=None, migration=None):
         return executor.loader.project_state(targets).apps
 
 
-def cleanup(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        try:
-            connection.disable_constraint_checking()
-            with transaction.atomic():
-                return fn(*args, **kwargs)
-        finally:
-            migrate()
-
-    return wrapper
+@pytest.fixture
+def initial_apps(request, transactional_db):
+    marker = request.node.get_closest_marker("migrate_from")
+    if not marker:
+        raise MissingMigrationSetupError
+    # marker.args had better be app and migration!
+    app, migration = marker.args
+    connection.disable_constraint_checking()
+    with transaction.atomic():
+        initial_apps = migrate(app, migration)
+        yield initial_apps
+    migrate()
