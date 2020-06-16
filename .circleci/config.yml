@@ -1,51 +1,35 @@
 version: 2
 
 jobs:
-  test_py36_dj20: &test-template
+  test_py38_dj30: &test-template
     docker:
-      - image: circleci/python:3.6
-      - image: circleci/postgres:latest
-        environment:
-          POSTGRES_USER: circleci
-          POSTGRES_DB: pytedjmi
+      - image: circleci/python:3.8
     environment:
-      TOXENV: py36-django20
+      TOXENV: py38-django30
     steps:
       - checkout
       - run: sudo pip install tox
       - run: poetry install
       - run: tox
 
-  test_py36_dj21:
+  test_py38_dj21:
     <<: *test-template
     docker:
-      - image: circleci/python:3.6
-      - image: circleci/postgres:latest
-        environment:
-          POSTGRES_USER: circleci
-          POSTGRES_DB: pytedjmi
+      - image: circleci/python:3.8
     environment:
-      TOXENV: py36-django21
+      TOXENV: py38-django21
 
-  test_py37_dj20:
+  test_py37_dj30:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
-      - image: circleci/postgres:latest
-        environment:
-          POSTGRES_USER: circleci
-          POSTGRES_DB: pytedjmi
     environment:
-      TOXENV: py37-django20
+      TOXENV: py37-django30
 
   test_py37_dj21:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
-      - image: circleci/postgres:latest
-        environment:
-          POSTGRES_USER: circleci
-          POSTGRES_DB: pytedjmi
     environment:
       TOXENV: py37-django21
 
@@ -53,7 +37,7 @@ workflows:
   version: 2
   test:
     jobs:
-      - test_py36_dj20
-      - test_py36_dj21
-      - test_py37_dj20
+      - test_py38_dj30
+      - test_py38_dj21
+      - test_py37_dj30
       - test_py37_dj21
