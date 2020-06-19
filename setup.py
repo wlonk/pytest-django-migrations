@@ -21,7 +21,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='pytedjmi',
-    version='0.4.0',
+    version='0.4.1',
     description='Test Django migrations through Pytest.',
     python_requires='==3.*,>=3.6.0',
     author='Kit La Touche',
@@ -35,12 +35,12 @@ setup(
     packages=['pytedjmi', 'tests.migrations'],
     package_data={},
     install_requires=[
-        'django==3.*,>=3.0.0', 'pytest==5.*,>=5.4.3',
-        'pytest-django==3.*,>=3.9.0'
+        'django>=3.0.0', 'pytest>=5.4.3',
+        'pytest-django>=3.9.0'
     ],
     extras_require={
         'dev': [
-            'black==19.*,>=19.10.0', 'coverage', 'flake8', 'isort', 'pytest-cov',
+            'black==19.10.0', 'coverage', 'flake8', 'isort', 'pytest-cov',
             'sphinx', 'sphinx-rtd-theme', 'tox'
         ]
     },
