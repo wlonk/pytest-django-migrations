@@ -21,7 +21,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='pytedjmi',
-    version='0.4.1',
+    version='0.4.2',
     description='Test Django migrations through Pytest.',
     python_requires='==3.*,>=3.6.0',
     author='Kit La Touche',
