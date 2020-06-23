@@ -2,7 +2,7 @@
 Pytest Django Migrations
 ========================
 
- - version number: 0.4.2
+ - version number: 0.4.3
  - author: Kit La Touche
 
 Overview

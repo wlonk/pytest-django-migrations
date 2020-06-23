@@ -10,6 +10,14 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 ----------
 
+v0.4.3
+------
+
+Changed
+~~~~~~~
+
+* What the hell is going on with dependencies.
+
 v0.4.2
 ------
 
