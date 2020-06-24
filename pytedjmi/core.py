@@ -54,18 +54,20 @@ def migrate(app=None, migration=None):
             targets, plan=plan, state=pre_migrate_state.clone()
         )
         post_migrate_state.clear_delayed_apps_cache()
-        return executor.loader.project_state(targets).apps
+    return executor.loader.project_state(targets).apps
 
 
 @pytest.fixture
-def initial_apps(request, transactional_db):
+def initial_apps(request, django_db_blocker):
     marker = request.node.get_closest_marker("migrate_from")
     if not marker:
         raise MissingMigrationSetupError
     # marker.args had better be app and migration!
     app, migration = marker.args
-    connection.disable_constraint_checking()
-    with transaction.atomic():
-        initial_apps = migrate(app, migration)
+    with django_db_blocker.unblock():
+        connection.disable_constraint_checking()
+        with transaction.atomic():
+            initial_apps = migrate(app, migration)
         yield initial_apps
-    migrate()
+        with transaction.atomic():
+            migrate()
